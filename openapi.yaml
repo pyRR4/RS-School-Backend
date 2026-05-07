@@ -1,0 +1,89 @@
+openapi: 3.0.3
+info:
+  title: Product Service API
+  version: 1.0.0
+  description: Serverless AWS backend for the Product Service for Shop App.
+servers:
+  - url: https://o9glapsl74.execute-api.eu-central-1.amazonaws.com/prod/
+    description: Production API Gateway (Replace with your actual URL later)
+
+paths:
+  /products:
+    get:
+      summary: Get all available products
+      description: Returns a complete list of products including their inventory count.
+      operationId: getProductsList
+      responses:
+        '200':
+          description: A JSON array of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AvailableProduct'
+        '500':
+          description: Internal Server Error
+
+  /products/{id}:
+    get:
+      summary: Get a product by ID
+      description: Returns a single product object matching the provided UUID.
+      operationId: getProductById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID of the product to fetch
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvailableProduct'
+        '400':
+          description: Bad Request (Missing or invalid ID)
+        '404':
+          description: Product not found
+        '500':
+          description: Internal Server Error
+
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - id
+        - title
+        - price
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "7567ec4b-b10c-48c5-9345-fc73c48a80aa"
+        title:
+          type: string
+          example: "AWS Certified Developer Guide"
+        description:
+          type: string
+          example: "Complete guide to passing the AWS Dev exam."
+        price:
+          type: number
+          format: float
+          example: 49.99
+
+    AvailableProduct:
+      description: A product combined with its current inventory count.
+      allOf:
+        - $ref: '#/components/schemas/Product'
+        - type: object
+          required:
+            - count
+          properties:
+            count:
+              type: integer
+              example: 15
