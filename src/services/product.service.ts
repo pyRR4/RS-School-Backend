@@ -1,33 +1,52 @@
-import {AvailableProduct} from "../types/product.types";
+import crypto from 'crypto';
+import { ProductRepository } from '../repositories/product.repository';
+import { AvailableProduct } from '../types/product.types';
+import { CreateProductPayload } from '../schemas/product.schema';
 
-const mockDatabase: AvailableProduct[] = [
-    {
-        id: "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
-        title: "AWS Certified Developer Guide",
-        description: "Complete guide to passing the AWS Dev exam.",
-        price: 49.99,
-        count: 15
-    },
-    {
-        id: "7567ec4b-b10c-48c5-9345-fc73c48a80a1",
-        title: "Serverless Framework Pro",
-        description: "Advanced patterns for serverless applications.",
-        price: 29.50,
-        count: 2
-    },
-    {
-        id: "7567ec4b-b10c-48c5-9345-fc73c48a80a2",
-        title: "Mechanical Keyboard Keycaps",
-        description: "PBT Double-shot keycaps, cherry profile.",
-        price: 110.00,
-        count: 0
-    }
-];
+const repository = new ProductRepository();
 
 export const getProductsList = async (): Promise<AvailableProduct[]> => {
-    return mockDatabase;
+  const products = await repository.getAllProducts();
+  const stocks = await repository.getAllStocks();
+
+  return products.map(product => {
+    const stock = stocks.find(s => s.product_id === product.id);
+    return {
+      ...product,
+      count: stock ? stock.count : 0
+    };
+  });
 };
 
 export const getProductsById = async (id: string): Promise<AvailableProduct | undefined> => {
-    return mockDatabase.find(p => p.id === id);
+  const product = await repository.getProductById(id);
+
+  if (!product) {
+    return undefined;
+  }
+
+  const stock = await repository.getStockByProductId(id);
+
+  return {
+    ...product,
+    count: stock ? stock.count : 0
+  };
+};
+
+export const createProduct = async (productData: CreateProductPayload): Promise<AvailableProduct> => {
+  const newId = crypto.randomUUID();
+
+  const newProduct = {
+    id: newId,
+    title: productData.title,
+    description: productData.description || '',
+    price: productData.price,
+  };
+
+  await repository.createProductWithStock(newProduct, productData.count);
+
+  return {
+    ...newProduct,
+    count: productData.count
+  };
 };

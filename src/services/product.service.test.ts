@@ -1,42 +1,81 @@
-import {getProductsById, getProductsList} from './product.service';
+import { getProductsList, getProductsById, createProduct } from './product.service';
+import { ProductRepository } from '../repositories/product.repository';
+
+jest.mock('../repositories/product.repository');
 
 describe('Product Service', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
 
     describe('getProductsList', () => {
-        it('should return a complete list of mocked products', async () => {
-            const products = await getProductsList();
+        it('should fetch products and stocks, and return joined models', async () => {
+            (ProductRepository.prototype.getAllProducts as jest.Mock).mockResolvedValue([
+                { id: '1', title: 'A', description: '', price: 10 },
+                { id: '2', title: 'B', description: '', price: 20 }
+            ]);
+            (ProductRepository.prototype.getAllStocks as jest.Mock).mockResolvedValue([
+                { product_id: '1', count: 5 }
+            ]);
 
-            expect(products).toBeDefined();
-            expect(Array.isArray(products)).toBe(true);
-            expect(products.length).toBe(3);
+            const result = await getProductsList();
 
-            expect(products[0]).toHaveProperty('id');
-            expect(products[0]).toHaveProperty('title');
-            expect(products[0]).toHaveProperty('description');
-            expect(products[0]).toHaveProperty('price');
-            expect(products[0]).toHaveProperty('count');
+            expect(result.length).toBe(2);
+            expect(result[0].count).toBe(5);
+            expect(result[1].count).toBe(0);
+
+            expect(ProductRepository.prototype.getAllProducts).toHaveBeenCalledTimes(1);
+            expect(ProductRepository.prototype.getAllStocks).toHaveBeenCalledTimes(1);
         });
     });
 
     describe('getProductsById', () => {
-        it('should return a specific product when a valid ID is provided', async () => {
-            const validId = "7567ec4b-b10c-48c5-9345-fc73c48a80a1";
+        it('should return undefined if product is not found', async () => {
+            (ProductRepository.prototype.getProductById as jest.Mock).mockResolvedValue(undefined);
 
-            const product = await getProductsById(validId);
+            const result = await getProductsById('invalid-id');
 
-            expect(product).toBeDefined();
-            expect(product?.id).toBe(validId);
-            expect(product?.title).toBe("Serverless Framework Pro");
-            expect(product?.price).toBe(29.50);
-            expect(product?.count).toBeDefined();
+            expect(result).toBeUndefined();
+            expect(ProductRepository.prototype.getStockByProductId).not.toHaveBeenCalled();
         });
 
-        it('should return undefined when an ID that does not exist is provided', async () => {
-            const invalidId = "non-existent-uuid-1234";
+        it('should return joined product if found', async () => {
+            (ProductRepository.prototype.getProductById as jest.Mock).mockResolvedValue({
+                id: '123', title: 'Found', description: '', price: 50
+            });
+            (ProductRepository.prototype.getStockByProductId as jest.Mock).mockResolvedValue({
+                product_id: '123', count: 12
+            });
 
-            const product = await getProductsById(invalidId);
+            const result = await getProductsById('123');
 
-            expect(product).toBeUndefined();
+            expect(result?.title).toBe('Found');
+            expect(result?.count).toBe(12);
+        });
+    });
+
+    describe('createProduct', () => {
+        it('should generate a UUID, call repository, and return full model', async () => {
+            const payload = { title: 'New Item', description: 'Desc', price: 99, count: 3 };
+            (ProductRepository.prototype.createProductWithStock as jest.Mock).mockResolvedValue(undefined);
+
+            const result = await createProduct(payload as any);
+
+            expect(result.id).toBeDefined();
+            expect(typeof result.id).toBe('string');
+            expect(result.id.length).toBeGreaterThan(30);
+
+            expect(result.title).toBe(payload.title);
+            expect(result.price).toBe(payload.price);
+            expect(result.count).toBe(payload.count);
+
+            expect(ProductRepository.prototype.createProductWithStock).toHaveBeenCalledWith(
+              expect.objectContaining({
+                  id: expect.any(String),
+                  title: 'New Item'
+              }),
+              3
+            );
         });
     });
 });
