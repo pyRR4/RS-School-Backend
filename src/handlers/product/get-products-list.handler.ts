@@ -3,7 +3,7 @@ import { getProductsList } from '../../services/product.service';
 import { withErrorHandler } from '../../utils/with-error-handler';
 
 export const handler = withErrorHandler(async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    console.log('Fetching all products');
+    console.log('GET /products requested. Event:', event);
 
     const products = await getProductsList();
 

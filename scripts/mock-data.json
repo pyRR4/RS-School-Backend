@@ -1,0 +1,72 @@
+[
+  {
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80aa",
+    "title": "AWS Certified Developer Guide",
+    "description": "Complete guide to passing the AWS Dev exam.",
+    "price": 49.99,
+    "count": 15
+  },
+  {
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a1",
+    "title": "Serverless Framework Pro",
+    "description": "Advanced patterns for serverless applications.",
+    "price": 29.50,
+    "count": 5
+  },
+  {
+    "id": "7567ec4b-b10c-48c5-9345-fc73c48a80a2",
+    "title": "Mechanical Keyboard Keycaps",
+    "description": "PBT Double-shot keycaps, cherry profile.",
+    "price": 110.00,
+    "count": 0
+  },
+  {
+    "id": "8f56a1b2-1c34-4d5e-6f7a-8b9c0d1e2f3a",
+    "title": "Sony WH-1000XM5 Headphones",
+    "description": "Industry leading noise-canceling wireless headphones.",
+    "price": 348.00,
+    "count": 12
+  },
+  {
+    "id": "b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e",
+    "title": "Ergonomic Office Chair",
+    "description": "Breathable mesh back with adjustable lumbar support.",
+    "price": 249.99,
+    "count": 8
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+    "title": "Dell UltraSharp 27\" 4K Monitor",
+    "description": "High color accuracy monitor with USB-C power delivery.",
+    "price": 580.00,
+    "count": 3
+  },
+  {
+    "id": "c9d8e7f6-a5b4-c3d2-e1f0-a9b8c7d6e5f4",
+    "title": "Logitech MX Master 3S",
+    "description": "Advanced wireless mouse with hyper-fast scrolling.",
+    "price": 99.99,
+    "count": 25
+  },
+  {
+    "id": "f1e2d3c4-b5a6-9f8e-7d6c-5b4a3f2e1d0c",
+    "title": "Anker USB-C Hub (8-in-1)",
+    "description": "Dual 4K HDMI, 100W Power Delivery, and Ethernet port.",
+    "price": 65.50,
+    "count": 40
+  },
+  {
+    "id": "e5d4c3b2-a1f0-e9d8-c7b6-a5f4e3d2c1b0",
+    "title": "Autonomous SmartDesk Core",
+    "description": "Height adjustable standing desk with memory presets.",
+    "price": 499.00,
+    "count": 4
+  },
+  {
+    "id": "d4c3b2a1-0f9e-8d7c-6b5a-4f3e2d1c0b9a",
+    "title": "Leather Desk Mat",
+    "description": "Premium vegan leather desk pad, waterproof and anti-slip.",
+    "price": 35.00,
+    "count": 50
+  }
+]

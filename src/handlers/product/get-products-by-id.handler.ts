@@ -4,9 +4,9 @@ import {BadRequestError, NotFoundError} from "../../errors/http.error";
 import {withErrorHandler} from "../../utils/with-error-handler";
 
 export const handler = withErrorHandler(async(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    console.log('Incoming request parameters:', event.pathParameters);
+    console.log('GET /products/{productId} requested. Path params:', event.pathParameters);
 
-    const productId = event.pathParameters?.id;
+    const productId = event.pathParameters?.productId;
 
     if (!productId) {
         throw new BadRequestError('Product ID is missing')
