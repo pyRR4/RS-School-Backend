@@ -4,7 +4,7 @@ info:
   description: API responsible for handling CSV file imports. Generates pre-signed S3 URLs to allow direct uploads from the client to the cloud.
   version: 1.0.0
 servers:
-  - url: https://{api-id}.execute-api.{region}.amazonaws.com/{stage}
+  - url: https://haoibow83h.execute-api.eu-central-1.amazonaws.com/prod
     description: AWS API Gateway Server
 paths:
   /import:
