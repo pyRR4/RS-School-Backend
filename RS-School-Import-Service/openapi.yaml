@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: RS School Import Service API
+  description: API responsible for handling CSV file imports. Generates pre-signed S3 URLs to allow direct uploads from the client to the cloud.
+  version: 1.0.0
+servers:
+  - url: https://{api-id}.execute-api.{region}.amazonaws.com/{stage}
+    description: AWS API Gateway Server
+paths:
+  /import:
+    get:
+      summary: Request a pre-signed S3 URL for file upload
+      description: Generates a temporary, pre-signed S3 URL that the client can use to perform a direct `PUT` request to upload a CSV file into the `uploaded/` folder.
+      operationId: getImportPresignedUrl
+      parameters:
+        - name: name
+          in: query
+          description: The name of the CSV file to be uploaded.
+          required: true
+          schema:
+            type: string
+            example: products.csv
+      responses:
+        '200':
+          description: Successfully generated the pre-signed URL.
+          headers:
+            Access-Control-Allow-Origin:
+              description: CORS header allowing cross-origin requests
+              schema:
+                type: string
+                example: "*"
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: uri
+                example: "https://your-bucket.s3.eu-west-1.amazonaws.com/uploaded/products.csv?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=..."
+        '400':
+          description: Bad Request. Missing or invalid query parameter.
+          headers:
+            Access-Control-Allow-Origin:
+              description: CORS header allowing cross-origin requests
+              schema:
+                type: string
+                example: "*"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                MissingParameter:
+                  value:
+                    message: 'Missing "name" query string parameter.'
+        '500':
+          description: Internal Server Error.
+          headers:
+            Access-Control-Allow-Origin:
+              description: CORS header allowing cross-origin requests
+              schema:
+                type: string
+                example: "*"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                InternalError:
+                  value:
+                    message: "Internal Server Error"
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: Description of the error.
